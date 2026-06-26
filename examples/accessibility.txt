@@ -1,0 +1,27 @@
+=====================================
+ACCESSIBILITY PA11Y REPORT
+=====================================
+
+Generated : 2026-06-26 11:50:13
+Project   : portfolio-site
+Tool      : accessibility_audit.py
+Command   : npx --yes pa11y --reporter json http://127.0.0.1:51313/index.html http://127.0.0.1:51313/about.html
+Exit Code : 0
+Result    : PASS
+
+=====================================
+
+Pages Checked: 2
+Total Issues: 0
+Errors: 0
+Warnings: 0
+Notices: 0
+
+=== index.html ===
+URL: http://127.0.0.1:51313/index.html
+No Pa11y issues were reported.
+
+=== about.html ===
+URL: http://127.0.0.1:51313/about.html
+No Pa11y issues were reported.
+

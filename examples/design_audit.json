@@ -1,0 +1,313 @@
+{
+  "schema_version": "1.0",
+  "audit": {
+    "id": "design-consistency",
+    "name": "Design Consistency",
+    "category": "design"
+  },
+  "metadata": {
+    "generated": "2026-06-26 11:50:09",
+    "project": "portfolio-site",
+    "tool": "design_audit.py",
+    "command": "python3 scripts/design_audit.py",
+    "exit_code": 0,
+    "duration_ms": 11
+  },
+  "result": {
+    "passed": true,
+    "severity": "warning",
+    "score": 86,
+    "confidence": "low",
+    "counts": {
+      "errors": 0,
+      "warnings": 8,
+      "recommendations": 4
+    }
+  },
+  "metrics": {
+    "html_pages_checked": 2,
+    "css_files_checked": 1,
+    "font_families_count": 3,
+    "font_sizes_count": 18,
+    "font_weights_count": 4,
+    "line_heights_count": 7,
+    "letter_spacing_count": 3,
+    "color_values_count": 50,
+    "css_variable_count": 61,
+    "hard_coded_color_count": 33,
+    "spacing_values_count": 34,
+    "border_radius_values_count": 8,
+    "box_shadow_values_count": 12,
+    "button_style_count": 8,
+    "images_checked": 2,
+    "images_missing_width": 0,
+    "images_missing_height": 0,
+    "images_missing_loading_lazy": 0,
+    "fixed_width_values": 0,
+    "fixed_height_values": 0,
+    "inline_style_count": 0
+  },
+  "issues": {
+    "typography_consistency": [
+      {
+        "message": "Many unique font-size values found.",
+        "count": 18,
+        "values": [
+          "0",
+          "0.72rem",
+          "0.82rem",
+          "0.85rem",
+          "0.86rem",
+          "0.88rem",
+          "0.8rem",
+          "0.94rem",
+          "0.95rem",
+          "1.05rem",
+          "1.1em",
+          "1.1rem",
+          "1.4em",
+          "1.5rem",
+          "14px",
+          "1rem",
+          "2rem",
+          "clamp(2.4rem, 6vw, 4.8rem)"
+        ]
+      }
+    ],
+    "color_consistency": [
+      {
+        "message": "Repeated hard-coded colors found.",
+        "colors": [
+          {
+            "value": "currentcolor",
+            "count": 2
+          },
+          {
+            "value": "rgba(0, 0, 0, 0.18)",
+            "count": 2
+          },
+          {
+            "value": "rgba(0, 0, 0, 0.24)",
+            "count": 2
+          },
+          {
+            "value": "rgba(0, 0, 0, 0.42)",
+            "count": 2
+          },
+          {
+            "value": "rgba(212, 170, 72, 0.35)",
+            "count": 2
+          },
+          {
+            "value": "rgba(214, 167, 86, 0.16)",
+            "count": 2
+          },
+          {
+            "value": "rgba(255, 255, 255, 0.03)",
+            "count": 2
+          },
+          {
+            "value": "rgba(255, 255, 255, 0.04)",
+            "count": 2
+          },
+          {
+            "value": "transparent",
+            "count": 4
+          }
+        ]
+      },
+      {
+        "message": "Many unique color values found.",
+        "count": 50
+      }
+    ],
+    "spacing_consistency": [
+      {
+        "message": "Many unique spacing values found.",
+        "count": 34,
+        "sample": [
+          "0",
+          "0.25rem",
+          "0.3rem",
+          "0.45rem",
+          "0.4rem",
+          "0.55rem",
+          "0.7em",
+          "0.8rem",
+          "1.25rem",
+          "1.2em",
+          "1.5rem",
+          "10px",
+          "12px",
+          "14px",
+          "16px",
+          "18px",
+          "1em",
+          "1px",
+          "1rem",
+          "20px"
+        ]
+      },
+      {
+        "message": "Many unique box-shadow values found.",
+        "count": 12
+      }
+    ],
+    "button_consistency": [
+      {
+        "message": "Multiple distinct button or CTA visual style families found.",
+        "count": 8,
+        "families": [
+          {
+            "pattern": {
+              "color": "var(--accent) !important"
+            },
+            "selectors": [
+              ".resume-link"
+            ]
+          },
+          {
+            "pattern": {
+              "padding": "0.7em 1.2em",
+              "border-radius": "12px",
+              "color": "var(--bg-primary) !important",
+              "border": "none",
+              "box-shadow": "hard-coded-color"
+            },
+            "selectors": [
+              ".fun-fact-button"
+            ]
+          },
+          {
+            "pattern": {
+              "color": "var(--bg-primary) !important"
+            },
+            "selectors": [
+              ".fun-fact-button:hover"
+            ]
+          },
+          {
+            "pattern": {
+              "padding": "10px 12px",
+              "border-radius": "8px",
+              "background": "hard-coded-color",
+              "color": "var(--text-primary)",
+              "border": "1px solid var(--border)"
+            },
+            "selectors": [
+              ".project-nav__button"
+            ]
+          },
+          {
+            "pattern": {
+              "background": "hard-coded-color",
+              "color": "var(--accent-gold-soft)"
+            },
+            "selectors": [
+              ".project-nav__button.is-active, .project-nav__button.is-selected, .project-nav__button.is-related"
+            ]
+          },
+          {
+            "pattern": {
+              "padding": "10px 12px",
+              "border-radius": "8px",
+              "background": "hard-coded-color",
+              "color": "var(--accent-gold)",
+              "border": "hard-coded-color",
+              "box-shadow": "hard-coded-color"
+            },
+            "selectors": [
+              ".skill-detail__project-button"
+            ]
+          },
+          {
+            "pattern": {
+              "padding": "12px 14px",
+              "border-radius": "10px"
+            },
+            "selectors": [
+              ".project-detail .skill-project-button"
+            ]
+          },
+          {
+            "pattern": {
+              "padding": "0",
+              "border-radius": "8px",
+              "color": "var(--text-primary)",
+              "border": "1px solid var(--border)",
+              "box-shadow": "hard-coded-color"
+            },
+            "selectors": [
+              "/* === 3. Back to Top Button === */ #backToTop"
+            ]
+          }
+        ]
+      }
+    ],
+    "image_presentation": [],
+    "responsive_layout_risks": [],
+    "inline_styles": [],
+    "visual_review_notes": [
+      {
+        "message": "Review max-width values for layout consistency.",
+        "count": 5,
+        "values": [
+          {
+            "file": "style.css",
+            "selector": ".container",
+            "property": "max-width",
+            "value": "1200px",
+            "is_custom_property": false
+          },
+          {
+            "file": "style.css",
+            "selector": ".about-wrapper",
+            "property": "max-width",
+            "value": "1200px",
+            "is_custom_property": false
+          },
+          {
+            "file": "style.css",
+            "selector": ".about-text",
+            "property": "max-width",
+            "value": "1050px",
+            "is_custom_property": false
+          },
+          {
+            "file": "style.css",
+            "selector": ".fun-fact-container",
+            "property": "max-width",
+            "value": "600px",
+            "is_custom_property": false
+          },
+          {
+            "file": "style.css",
+            "selector": ".homepage-intro",
+            "property": "max-width",
+            "value": "880px",
+            "is_custom_property": false
+          }
+        ]
+      },
+      {
+        "message": "Review border-radius values against the intended component system.",
+        "values": [
+          "10px",
+          "12px",
+          "16px",
+          "2px",
+          "30px",
+          "50%",
+          "8px",
+          "999px"
+        ]
+      }
+    ]
+  },
+  "recommendations": [
+    "Review typography scale for consistency.",
+    "Consider consolidating repeated hard-coded colors into CSS variables.",
+    "Review spacing values against a consistent spacing scale.",
+    "Review button and CTA styles for consistency."
+  ]
+}

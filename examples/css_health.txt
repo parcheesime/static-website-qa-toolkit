@@ -1,0 +1,272 @@
+=====================================
+CSS HEALTH REPORT
+=====================================
+
+Generated : 2026-06-26 11:50:09
+Project   : portfolio-site
+Tool      : css_health.py
+Command   : python3 scripts/css_health.py
+Exit Code : 0
+Result    : WARNING
+
+=====================================
+
+CSS File: style.css
+Rule Blocks: 172
+Unique Selectors: 141
+Duplicate Selectors: 25
+!important Uses: 41
+Media Queries: 12
+Repeated Media Queries: 0
+Hard-Coded Colors: 59
+Fixed Pixel Layout Values: 87
+Potential Overflow Risks: 3
+
+=== Duplicate Selectors ===
+body (2)
+.header-container (2)
+.resume-link-wrapper (2)
+.resume-link-wrapper::before (2)
+.resume-link (2)
+.profile-pic (2)
+h1 (2)
+section (2)
+.about-wrapper (2)
+.about-text (2)
+.fun-fact-container (2)
+.skills-container (3)
+.skills-pill (4)
+.skills-pill-text (4)
+.skills-pill svg (3)
+.mobile-nav-toggle (2)
+.top-nav ul (2)
+.top-nav li a (2)
+.nav-and-toggle-container (2)
+.contact-info p,
+  .contact-info a (2)
+html (2)
+.project-explorer (2)
+.skill-map (2)
+.project-detail .skill-project-list (2)
+.project-detail .skill-project-button (2)
+
+=== Conflicting Properties ===
+.resume-link-wrapper
+  margin-left: 0, 12px
+.resume-link-wrapper::before
+  content: "|", none
+.resume-link
+  margin-left: 0, 8px
+h1
+  font-size: 2rem !important, clamp(2.4rem, 6vw, 4.8rem)
+section
+  scroll-margin-top: 100px, 110px
+.about-wrapper
+  flex-direction: column, row
+.about-wrapper
+  gap: 2rem, 3rem
+.about-wrapper
+  justify-content: center, space-between
+.about-wrapper
+  text-align: center, left
+.about-text
+  max-width: 1050px, 60%
+.fun-fact-container
+  max-width: 40%, 600px
+.skills-container
+  margin: 32px auto 0, 60px 30px 0, 60px auto 0
+.skills-pill
+  gap: 5px, 6px, 8px
+.skills-pill
+  padding: 4px 10px, 5px 10px, 6px 12px, 8px 16px
+.skills-pill
+  margin: 3px, 4px, 5px
+.skills-pill-text
+  font-size: 0.82rem, 0.88rem, 0.8rem, 0.95rem
+.skills-pill svg
+  width: 16px, 18px, 20px
+.skills-pill svg
+  height: 16px, 18px, 20px
+.mobile-nav-toggle
+  display: inline-flex, none
+.top-nav ul
+  display: flex, none
+.top-nav ul
+  align-items: center, stretch
+.top-nav ul
+  gap: 0, clamp(1rem, 3vw, 2rem)
+.nav-and-toggle-container
+  align-items: center, stretch
+.nav-and-toggle-container
+  width: 100%, auto
+.nav-and-toggle-container
+  padding: 0.55rem 1.5rem, calc(0.45rem + env(safe-area-inset-top, 0px)) 1rem 0.45rem
+.nav-and-toggle-container
+  position: fixed, sticky
+.nav-and-toggle-container
+  z-index: 1000, 10000
+html
+  scroll-behavior: auto !important, smooth
+.project-explorer
+  grid-template-areas: "nav nav"
+      "detail skill", "nav"
+    "detail"
+    "skill"
+.project-explorer
+  grid-template-columns: minmax(0, 1fr), minmax(0, 2.2fr) minmax(280px, 0.8fr)
+.project-detail .skill-project-list
+  grid-template-columns: 1fr, repeat(auto-fit, minmax(220px, 220px))
+.project-detail .skill-project-button
+  height: 64px, auto
+.project-detail .skill-project-button
+  width: 100%, 220px
+
+=== !important Usage ===
+59: background-color: var(--bg-light) !important;
+60: color: var(--text-dark) !important;
+88: background: var(--bg-secondary) !important;
+89: border-bottom: 1px solid var(--border) !important;
+129: color: var(--accent) !important;
+146: color: var(--accent) !important;
+181: background-color: var(--bg-secondary) !important;
+182: color: var(--text-secondary) !important;
+306: background-color: var(--surface) !important;
+308: border-color: var(--border) !important;
+310: color: var(--text-dark) !important;
+324: background-color: var(--accent) !important;
+325: color: var(--bg-primary) !important;
+337: background-color: var(--accent-gold-soft) !important;
+338: color: var(--bg-primary) !important;
+361: background-color: var(--surface) !important;
+362: border-color: var(--border) !important;
+363: color: var(--text-dark) !important;
+386: background-color: var(--bg-secondary) !important;
+388: border-color: var(--border) !important;
+389: box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18) !important;
+401: color: var(--text-primary) !important;
+475: border-color: var(--accent-gold) !important;
+476: box-shadow: 0 6px 16px rgba(214, 167, 86, 0.18) !important;
+549: color: var(--text-secondary) !important;
+557: color: var(--accent-gold-soft) !important;
+572: border-bottom-color: var(--border) !important;
+659: font-size: 2rem !important;
+664: font-size: 1.5rem !important;
+701: animation: buttonPulse 1.5s ease-in-out !important;
+722: overflow: visible !important;
+907: padding-left: 0 !important;
+933: padding-left: 0 !important;
+1127: color: var(--text-primary) !important;
+1131: color: var(--accent-gold-soft) !important;
+1139: background-color: var(--bg-light) !important;
+1144: color: var(--text-dark) !important;
+1145: border-bottom-color: var(--accent-gold) !important;
+1150: color: var(--text-muted) !important;
+1229: scroll-behavior: auto !important;
+1234: animation: none !important;
+
+=== Repeated Media Queries ===
+
+=== Most Repeated Colors ===
+#bac: 3
+rgba(0, 0, 0, 0.18): 2
+rgba(0, 0, 0, 0.15): 2
+rgba(214, 167, 86, 0.16): 2
+rgba(255, 255, 255, 0.03): 2
+rgba(212, 170, 72, 0.35): 2
+rgba(255, 255, 255, 0.04): 2
+rgba(0, 0, 0, 0.24): 2
+rgba(0, 0, 0, 0.42): 2
+
+=== Potential Overflow Risks ===
+61: overflow-x: hidden;
+227: inline-size: min(250px, calc(100vw - 2rem));
+600: max-width: 100vw;
+
+=== Fixed Pixel Layout Values ===
+82: max-width: 1200px;
+89: border-bottom: 1px solid var(--border) !important;
+114: margin-right: 8px;
+121: margin-left: 12px;
+130: margin-left: 8px;
+139: width: 120px;
+140: height: 120px;
+175: border-bottom: 2px solid var(--accent-gold);
+189: scroll-margin-top: 100px;
+190: padding: 20px;
+221: padding: 8px 14px;
+247: border-width: 6px;
+263: @media (max-width: 899px) {
+277: max-width: 1200px;
+283: max-width: 1050px;
+311: padding: 20px 30px;
+312: max-width: 600px;
+319: margin-bottom: 12px;
+356: width: 128px;
+357: height: 128px;
+359: padding: 6px;
+373: margin: 60px 30px 0;
+382: padding: 8px 16px;
+383: margin: 5px;
+407: width: 20px;
+408: height: 20px;
+415: @media (max-width: 1200px) {
+417: padding: 6px 12px;
+418: margin: 4px;
+427: width: 18px;
+428: height: 18px;
+433: @media (max-width: 1024px) {
+435: margin: 60px auto 0;
+440: @media (max-width: 680px) {
+442: margin: 32px auto 0;
+446: padding: 5px 10px;
+447: margin: 3px;
+456: width: 16px;
+457: height: 16px;
+462: @media (max-width: 480px) {
+464: padding: 4px 10px;
+571: border-bottom: 1px solid var(--border);
+576: @media (max-width: 768px) {
+615: height: 40px;
+618: width: 44px;
+625: height: 2px;
+626: width: 20px;
+652: border-top: 1px solid var(--border);
+675: scroll-margin-top: 110px;
+714: height: 4px;
+716: margin-top: 6px;
+744: padding-top: 20px;
+748: padding: 36px 24px;
+756: max-width: 880px;
+760: margin-top: 10px;
+795: padding: 18px;
+815: margin-bottom: 12px;
+840: padding: 10px 12px;
+860: margin-bottom: 14px;
+864: margin-top: 6px;
+870: margin-top: 18px;
+881: max-height: 360px;
+887: margin-top: 14px;
+891: margin-bottom: 6px;
+899: margin-top: 4px;
+920: padding: 3px 9px;
+925: margin-top: 10px;
+932: margin-top: 20px;
+947: padding: 10px 12px;
+969: height: 64px;
+970: padding: 12px 14px;
+971: width: 220px;
+987: @media (max-width: 640px) {
+994: min-height: 52px;
+999: @media (min-width: 900px) {
+1022: padding: 60px 0;
+1052: padding: 6px 10px;
+1081: margin-top: 1px;
+1091: bottom: 30px;
+1092: right: 20px;
+1097: width: 36px;
+1098: height: 36px;
+1155: width: 8px;
+1156: height: 8px;
+1172: @media (max-width: 500px) {
+1189: @media (min-width: 769px) {
+1213: @media (min-width: 769px) and (max-width: 1024px) {

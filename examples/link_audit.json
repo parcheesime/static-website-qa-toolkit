@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0",
+  "audit": {
+    "id": "broken-links",
+    "name": "Broken Link Audit",
+    "category": "links"
+  },
+  "metadata": {
+    "generated": "2026-06-26 11:50:36",
+    "project": "portfolio-site",
+    "tool": "link_audit.py",
+    "command": "python3 scripts/link_audit.py",
+    "exit_code": 0,
+    "duration_ms": 2249
+  },
+  "result": {
+    "passed": true,
+    "severity": "warning",
+    "score": 85,
+    "confidence": "medium",
+    "counts": {
+      "errors": 0,
+      "warnings": 6,
+      "recommendations": 0
+    }
+  },
+  "metrics": {
+    "pages_checked": 2,
+    "links_checked": 22,
+    "internal_links": 8,
+    "external_links": 6,
+    "asset_references": 8,
+    "broken_internal_links": 0,
+    "broken_external_links": 2,
+    "broken_asset_references": 0,
+    "skipped_links": 4
+  },
+  "issues": {
+    "broken_internal_links": [],
+    "broken_external_links": [
+      {
+        "page": "index.html",
+        "url": "https://www.linkedin.com/in/aletia-trepte",
+        "source": "a[href]",
+        "reason": "external request failed",
+        "status": 999,
+        "method": "GET",
+        "error": "HTTP Error 999: <none>"
+      },
+      {
+        "page": "about.html",
+        "url": "https://www.linkedin.com/in/aletia-trepte",
+        "source": "a[href]",
+        "reason": "external request failed",
+        "status": 999,
+        "method": "HEAD",
+        "error": "HTTP Error 999: <none>"
+      }
+    ],
+    "broken_asset_references": [],
+    "malformed_links": [],
+    "skipped_links": [
+      {
+        "page": "index.html",
+        "url": "https://fonts.googleapis.com",
+        "source": "link[href]",
+        "reason": "ignored resource hint"
+      },
+      {
+        "page": "index.html",
+        "url": "https://fonts.gstatic.com",
+        "source": "link[href]",
+        "reason": "ignored resource hint"
+      },
+      {
+        "page": "about.html",
+        "url": "https://fonts.googleapis.com",
+        "source": "link[href]",
+        "reason": "ignored resource hint"
+      },
+      {
+        "page": "about.html",
+        "url": "https://fonts.gstatic.com",
+        "source": "link[href]",
+        "reason": "ignored resource hint"
+      }
+    ]
+  },
+  "recommendations": []
+}

@@ -1,0 +1,59 @@
+=====================================
+BROKEN LINK AUDIT REPORT
+=====================================
+
+Generated : 2026-06-26 11:50:36
+Project   : portfolio-site
+Tool      : link_audit.py
+Command   : python3 scripts/link_audit.py
+Exit Code : 0
+Result    : WARNING
+
+=====================================
+
+Pages Checked: 2
+Links Checked: 22
+Internal Links: 8
+External Links: 6
+Asset References: 8
+Broken Internal Links: 0
+Broken External Links: 2
+Broken Asset References: 0
+Skipped Links: 4
+
+=== Broken Internal Links ===
+None
+
+=== Broken External Links ===
+- index.html: https://www.linkedin.com/in/aletia-trepte
+  Source: a[href]
+  Reason: external request failed
+  Status: 999
+  Method: GET
+  Error: HTTP Error 999: <none>
+- about.html: https://www.linkedin.com/in/aletia-trepte
+  Source: a[href]
+  Reason: external request failed
+  Status: 999
+  Method: HEAD
+  Error: HTTP Error 999: <none>
+
+=== Broken Asset References ===
+None
+
+=== Malformed Links ===
+None
+
+=== Skipped Links ===
+- index.html: https://fonts.googleapis.com
+  Source: link[href]
+  Reason: ignored resource hint
+- index.html: https://fonts.gstatic.com
+  Source: link[href]
+  Reason: ignored resource hint
+- about.html: https://fonts.googleapis.com
+  Source: link[href]
+  Reason: ignored resource hint
+- about.html: https://fonts.gstatic.com
+  Source: link[href]
+  Reason: ignored resource hint

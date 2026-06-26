@@ -1,0 +1,45 @@
+=====================================
+LIGHTHOUSE REPORT
+=====================================
+
+Generated : 2026-06-26 11:50:19
+Project   : portfolio-site
+Tool      : lighthouse_audit.py
+Command   : npx --yes lighthouse@12 http://127.0.0.1:53413/index.html --output=json --output-path=reports/lighthouse_raw.json --quiet --chrome-flags="--headless --no-sandbox --disable-gpu --user-data-dir=/tmp/lighthouse-profile-d73p6tpm"
+Exit Code : 0
+Result    : WARNING
+
+=====================================
+
+URL: http://127.0.0.1:53413/index.html
+Overall Score: 73
+Confidence: high
+
+=== Metrics ===
+Performance: 73
+Accessibility: 100
+Best Practices: 96
+Seo: 91
+
+=== Categories Below Target ===
+- Performance: 73 (target 90)
+
+=== Audits Below Target ===
+- First Contentful Paint: 47
+- Largest Contentful Paint: 28
+- Max Potential First Input Delay: 80
+- Browser errors were logged to the console: 0
+- Time to Interactive: 77
+- Largest Contentful Paint element: 0
+- Serve static assets with an efficient cache policy: 50
+- Eliminate render-blocking resources: 0
+- Minify CSS: 50
+- Minify JavaScript: 50
+- Reduce unused JavaScript: 0
+- Enable text compression: 0
+- Avoid serving legacy JavaScript to modern browsers: 50
+- Document does not have a meta description: 0
+- Use efficient cache lifetimes: 50
+- Document request latency: 50
+- Network dependency tree: 0
+- Render blocking requests: 0

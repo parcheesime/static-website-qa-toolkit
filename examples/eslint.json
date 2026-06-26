@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "audit": {
+    "id": "javascript-lint",
+    "name": "JavaScript Lint",
+    "category": "javascript"
+  },
+  "metadata": {
+    "generated": "2026-06-26 11:50:12",
+    "project": "portfolio-site",
+    "tool": "js_audit.py",
+    "command": "npx eslint .",
+    "exit_code": 0,
+    "duration_ms": 936
+  },
+  "result": {
+    "passed": true,
+    "severity": "pass",
+    "score": 100,
+    "confidence": "high",
+    "counts": {
+      "errors": 0,
+      "warnings": 0,
+      "recommendations": 0
+    }
+  },
+  "metrics": {
+    "stdout_lines": 0,
+    "stderr_lines": 0,
+    "has_output": false
+  },
+  "issues": {
+    "stdout": "",
+    "stderr": ""
+  },
+  "recommendations": []
+}

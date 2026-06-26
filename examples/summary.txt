@@ -1,0 +1,135 @@
+=====================================
+QA AUDIT SUMMARY
+=====================================
+
+Generated : 2026-06-26 11:50:39
+Source    : JSON reports in reports
+
+=====================================
+
+Overall Result : WARNING
+Audits         : 7
+
+CSS Health: WARNING
+  Score: 85
+  Confidence: medium
+  Errors: 0
+  Warnings: 198
+  Recommendations: 0
+  Exit Code: 0
+  Duration Ms: 4
+  Css File: style.css
+  Rule Blocks: 172
+  Unique Selectors: 141
+  Duplicate Selectors: 25
+  Important Uses: 41
+  Media Queries: 12
+  Repeated Media Queries: 0
+  Hard Coded Colors: 59
+  Fixed Pixel Layout Values: 87
+  Potential Overflow Risks: 3
+
+Design Consistency: WARNING
+  Score: 86
+  Confidence: low
+  Errors: 0
+  Warnings: 8
+  Recommendations: 4
+  Exit Code: 0
+  Duration Ms: 11
+  Html Pages Checked: 2
+  Css Files Checked: 1
+  Font Families Count: 3
+  Font Sizes Count: 18
+  Font Weights Count: 4
+  Line Heights Count: 7
+  Letter Spacing Count: 3
+  Color Values Count: 50
+  Css Variable Count: 61
+  Hard Coded Color Count: 33
+  Spacing Values Count: 34
+  Border Radius Values Count: 8
+  Box Shadow Values Count: 12
+  Button Style Count: 8
+  Images Checked: 2
+  Images Missing Width: 0
+  Images Missing Height: 0
+  Images Missing Loading Lazy: 0
+  Fixed Width Values: 0
+  Fixed Height Values: 0
+  Inline Style Count: 0
+  Recommendation Items:
+    - Review typography scale for consistency.
+    - Consider consolidating repeated hard-coded colors into CSS variables.
+    - Review spacing values against a consistent spacing scale.
+    - Review button and CTA styles for consistency.
+
+HTML Validation: PASS
+  Score: 100
+  Confidence: high
+  Errors: 0
+  Warnings: 0
+  Recommendations: 0
+  Exit Code: 0
+  Duration Ms: 1638
+  Stdout Lines: 0
+  Stderr Lines: 0
+  Has Output: False
+
+JavaScript Lint: PASS
+  Score: 100
+  Confidence: high
+  Errors: 0
+  Warnings: 0
+  Recommendations: 0
+  Exit Code: 0
+  Duration Ms: 936
+  Stdout Lines: 0
+  Stderr Lines: 0
+  Has Output: False
+
+Accessibility Pa11y: PASS
+  Score: 100
+  Confidence: high
+  Errors: 0
+  Warnings: 0
+  Recommendations: 0
+  Exit Code: 0
+  Duration Ms: 5839
+  Pages Checked: 2
+  Total Issues: 0
+  Errors: 0
+  Warnings: 0
+  Notices: 0
+
+Lighthouse: WARNING
+  Score: 73
+  Confidence: high
+  Errors: 0
+  Warnings: 1
+  Recommendations: 0
+  Exit Code: 0
+  Duration Ms: 17406
+  Performance: 73
+  Accessibility: 100
+  Best Practices: 96
+  Seo: 91
+
+Broken Link Audit: WARNING
+  Score: 85
+  Confidence: medium
+  Errors: 0
+  Warnings: 6
+  Recommendations: 0
+  Exit Code: 0
+  Duration Ms: 2249
+  Pages Checked: 2
+  Links Checked: 22
+  Internal Links: 8
+  External Links: 6
+  Asset References: 8
+  Broken Internal Links: 0
+  Broken External Links: 2
+  Broken Asset References: 0
+  Skipped Links: 4
+

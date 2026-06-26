@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "audit": {
+    "id": "html-validation",
+    "name": "HTML Validation",
+    "category": "html"
+  },
+  "metadata": {
+    "generated": "2026-06-26 11:50:09",
+    "project": "portfolio-site",
+    "tool": "html_audit.py",
+    "command": "npx html-validate@9 *.html",
+    "exit_code": 0,
+    "duration_ms": 1638
+  },
+  "result": {
+    "passed": true,
+    "severity": "pass",
+    "score": 100,
+    "confidence": "high",
+    "counts": {
+      "errors": 0,
+      "warnings": 0,
+      "recommendations": 0
+    }
+  },
+  "metrics": {
+    "stdout_lines": 0,
+    "stderr_lines": 0,
+    "has_output": false
+  },
+  "issues": {
+    "stdout": "",
+    "stderr": ""
+  },
+  "recommendations": []
+}

@@ -1,0 +1,79 @@
+=====================================
+DESIGN CONSISTENCY REPORT
+=====================================
+
+Generated : 2026-06-26 11:50:09
+Project   : portfolio-site
+Tool      : design_audit.py
+Command   : python3 scripts/design_audit.py
+Exit Code : 0
+Result    : WARNING
+
+=====================================
+
+Html Pages Checked: 2
+Css Files Checked: 1
+Font Families Count: 3
+Font Sizes Count: 18
+Font Weights Count: 4
+Line Heights Count: 7
+Letter Spacing Count: 3
+Color Values Count: 50
+Css Variable Count: 61
+Hard Coded Color Count: 33
+Spacing Values Count: 34
+Border Radius Values Count: 8
+Box Shadow Values Count: 12
+Button Style Count: 8
+Images Checked: 2
+Images Missing Width: 0
+Images Missing Height: 0
+Images Missing Loading Lazy: 0
+Fixed Width Values: 0
+Fixed Height Values: 0
+Inline Style Count: 0
+
+=== Typography Consistency ===
+- Many unique font-size values found.
+  Count: 18
+  Values: ['0', '0.72rem', '0.82rem', '0.85rem', '0.86rem', '0.88rem', '0.8rem', '0.94rem', '0.95rem', '1.05rem', '1.1em', '1.1rem', '1.4em', '1.5rem', '14px', '1rem', '2rem', 'clamp(2.4rem, 6vw, 4.8rem)']
+
+=== Color Consistency ===
+- Repeated hard-coded colors found.
+  Colors: [{'value': 'currentcolor', 'count': 2}, {'value': 'rgba(0, 0, 0, 0.18)', 'count': 2}, {'value': 'rgba(0, 0, 0, 0.24)', 'count': 2}, {'value': 'rgba(0, 0, 0, 0.42)', 'count': 2}, {'value': 'rgba(212, 170, 72, 0.35)', 'count': 2}, {'value': 'rgba(214, 167, 86, 0.16)', 'count': 2}, {'value': 'rgba(255, 255, 255, 0.03)', 'count': 2}, {'value': 'rgba(255, 255, 255, 0.04)', 'count': 2}, {'value': 'transparent', 'count': 4}]
+- Many unique color values found.
+  Count: 50
+
+=== Spacing Consistency ===
+- Many unique spacing values found.
+  Count: 34
+  Sample: ['0', '0.25rem', '0.3rem', '0.45rem', '0.4rem', '0.55rem', '0.7em', '0.8rem', '1.25rem', '1.2em', '1.5rem', '10px', '12px', '14px', '16px', '18px', '1em', '1px', '1rem', '20px']
+- Many unique box-shadow values found.
+  Count: 12
+
+=== Button Consistency ===
+- Multiple distinct button or CTA visual style families found.
+  Count: 8
+  Families: [{'pattern': {'color': 'var(--accent) !important'}, 'selectors': ['.resume-link']}, {'pattern': {'padding': '0.7em 1.2em', 'border-radius': '12px', 'color': 'var(--bg-primary) !important', 'border': 'none', 'box-shadow': 'hard-coded-color'}, 'selectors': ['.fun-fact-button']}, {'pattern': {'color': 'var(--bg-primary) !important'}, 'selectors': ['.fun-fact-button:hover']}, {'pattern': {'padding': '10px 12px', 'border-radius': '8px', 'background': 'hard-coded-color', 'color': 'var(--text-primary)', 'border': '1px solid var(--border)'}, 'selectors': ['.project-nav__button']}, {'pattern': {'background': 'hard-coded-color', 'color': 'var(--accent-gold-soft)'}, 'selectors': ['.project-nav__button.is-active, .project-nav__button.is-selected, .project-nav__button.is-related']}, {'pattern': {'padding': '10px 12px', 'border-radius': '8px', 'background': 'hard-coded-color', 'color': 'var(--accent-gold)', 'border': 'hard-coded-color', 'box-shadow': 'hard-coded-color'}, 'selectors': ['.skill-detail__project-button']}, {'pattern': {'padding': '12px 14px', 'border-radius': '10px'}, 'selectors': ['.project-detail .skill-project-button']}, {'pattern': {'padding': '0', 'border-radius': '8px', 'color': 'var(--text-primary)', 'border': '1px solid var(--border)', 'box-shadow': 'hard-coded-color'}, 'selectors': ['/* === 3. Back to Top Button === */ #backToTop']}]
+
+=== Image Presentation ===
+None
+
+=== Responsive Layout Risks ===
+None
+
+=== Inline Styles ===
+None
+
+=== Visual Review Notes ===
+- Review max-width values for layout consistency.
+  Count: 5
+  Values: [{'file': 'style.css', 'selector': '.container', 'property': 'max-width', 'value': '1200px', 'is_custom_property': False}, {'file': 'style.css', 'selector': '.about-wrapper', 'property': 'max-width', 'value': '1200px', 'is_custom_property': False}, {'file': 'style.css', 'selector': '.about-text', 'property': 'max-width', 'value': '1050px', 'is_custom_property': False}, {'file': 'style.css', 'selector': '.fun-fact-container', 'property': 'max-width', 'value': '600px', 'is_custom_property': False}, {'file': 'style.css', 'selector': '.homepage-intro', 'property': 'max-width', 'value': '880px', 'is_custom_property': False}]
+- Review border-radius values against the intended component system.
+  Values: ['10px', '12px', '16px', '2px', '30px', '50%', '8px', '999px']
+
+=== Recommendations ===
+- Review typography scale for consistency.
+- Consider consolidating repeated hard-coded colors into CSS variables.
+- Review spacing values against a consistent spacing scale.
+- Review button and CTA styles for consistency.
