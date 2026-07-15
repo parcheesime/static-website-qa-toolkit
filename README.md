@@ -63,80 +63,114 @@ This shared schema allows new audits to integrate automatically with the summary
 
 ## Running the Toolkit
 
-Install dependencies:
+### One-time setup
+
+Create and activate a Python virtual environment:
 
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+Install the required Python and Node.js dependencies:
+
+```bash
+pip install -r requirements.txt
 npm install
 ```
 
-Run the complete QA workflow:
+---
+
+### Auditing the Current Repository
+
+If you are running QA against the current repository:
 
 ```bash
 make qa
 ```
 
-To audit a separate static website repository while keeping the toolkit as the
-working directory, pass its path with `TARGET`:
+By default, the toolkit audits the current working directory.
+
+---
+
+### Auditing Another Static Website
+
+The toolkit can also audit another static website repository without modifying it.
+
+Example directory layout:
+
+```text
+~/dev/
+├── static-website-qa-toolkit/
+├── barkey-pet-sitting/
+├── abc-design/
+└── pariline-studio/
+```
+
+From the toolkit directory:
 
 ```bash
 make qa TARGET=../barkey-pet-sitting
 ```
 
-`TARGET` defaults to `.`, so `make qa` continues to audit the current directory.
-The resolved target must exist and be a directory. Reports remain in this
-toolkit's `reports/` directory.
-
 or
 
 ```bash
-npm run qa
+make qa TARGET=../abc-design
 ```
 
-Reports are generated in the `reports/` directory.
+The target repository is audited in place and is never modified by the toolkit.
 
-## Project Structure
+---
+
+### Reports
+
+Audit reports are generated in the toolkit's `reports/` directory.
+
+Example:
 
 ```text
-scripts/
-    *_audit.py
-    generate_summary.py
-
 reports/
-    Generated reports
-
-examples/
-    Sample reports
-
-docs/
-    Documentation
+├── summary.txt
+├── summary.json
+├── html_validation.txt
+├── html_validation.json
+├── css_health.txt
+├── css_health.json
+└── ...
 ```
 
-## Roadmap
+Each report includes metadata identifying the audited target repository.
 
-### Completed
+The audited website itself is not modified and no report files are written into the target project.
 
-* HTML Validation
-* CSS Health
-* JavaScript Lint
-* Accessibility
-* Lighthouse
-* Broken Link Audit
-* Design Consistency
+---
 
-### Planned
+### Typical Workflow
 
-* Asset Audit
-* SEO Audit
-* Security Audit
-* Project Quality Audit
-* Visual Regression Testing
-* Historical Report Dashboard
-* Multi-site Monitoring
+1. Make changes in the website project.
+2. Commit or save your work.
+3. Switch to the QA toolkit repository.
+4. Run the audit:
 
-## Vision
+```bash
+make qa TARGET=../barkey-pet-sitting
+```
 
-This project began as a reusable QA workflow for personal websites and client projects. The long-term goal is to evolve it into a complete static website quality platform capable of monitoring multiple websites, tracking quality over time, and assisting with ongoing maintenance through structured reporting and automation.
+5. Review the reports in:
 
-## Why another QA toolkit?
+```text
+reports/
+```
 
-Most website QA tools focus on one area, such as linting, accessibility, or performance. This project aims to unify technical validation, engineering quality, and design consistency into a single workflow with a shared reporting schema. The goal is to make routine website quality checks repeatable, extensible, and useful for both developers and AI-assisted review.
+6. Return to the website project and fix any issues.
+7. Repeat until the reports are clean.
+
+---
+
+### Notes
+
+- The toolkit never modifies the audited website.
+- Reports are written only to the toolkit repository.
+- External websites and third-party services are not contacted unless explicitly required by an audit.
+- Some audits (such as Lighthouse or Pa11y) require a locally running web server.
