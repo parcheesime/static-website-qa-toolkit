@@ -75,6 +75,17 @@ Run the complete QA workflow:
 make qa
 ```
 
+To audit a separate static website repository while keeping the toolkit as the
+working directory, pass its path with `TARGET`:
+
+```bash
+make qa TARGET=../barkey-pet-sitting
+```
+
+`TARGET` defaults to `.`, so `make qa` continues to audit the current directory.
+The resolved target must exist and be a directory. Reports remain in this
+toolkit's `reports/` directory.
+
 or
 
 ```bash

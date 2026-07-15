@@ -1,12 +1,12 @@
 from datetime import datetime
 from pathlib import Path
 import json
-import os
 import shutil
 import socket
 import subprocess
 import tempfile
 import time
+from qa_common import report_metadata, target_arguments
 
 SCHEMA_VERSION = "1.0"
 TOOL = "lighthouse_audit.py"
@@ -19,7 +19,8 @@ AUDIT = {
 CATEGORY_TARGET = 90
 ERROR_THRESHOLD = 70
 
-PROJECT = Path.cwd().name
+ARGS, TARGET = target_arguments("Run Lighthouse against a static website")
+PROJECT = TARGET.name
 TIMESTAMP = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 REPORT_DIR = Path("reports")
@@ -140,7 +141,7 @@ chrome_flags = (
     f"--user-data-dir={chrome_profile.name}"
 )
 COMMAND = (
-    f"npx --yes {LIGHTHOUSE_PACKAGE} "
+    f"npx --no-install {LIGHTHOUSE_PACKAGE} "
     f"{url} --output=json --output-path={RAW_REPORT_FILE} --quiet "
     f"--chrome-flags=\"{chrome_flags}\""
 )
@@ -151,7 +152,7 @@ if RAW_REPORT_FILE.exists():
     RAW_REPORT_FILE.unlink()
 
 server = subprocess.Popen(
-    ["python3", "-m", "http.server", str(port), "--bind", "127.0.0.1"],
+    ["python3", "-m", "http.server", str(port), "--bind", "127.0.0.1", "--directory", str(TARGET)],
     stdout=subprocess.DEVNULL,
     stderr=subprocess.DEVNULL,
 )
@@ -168,27 +169,23 @@ try:
         command_exit_code = 1
         stderr = "Local HTTP server did not start before timeout."
     else:
-        env = os.environ.copy()
         detected_chrome = chrome_path()
-
-        if detected_chrome:
-            env["CHROME_PATH"] = detected_chrome
 
         result = subprocess.run(
             [
                 "npx",
-                "--yes",
+                "--no-install",
                 LIGHTHOUSE_PACKAGE,
                 url,
                 "--output=json",
                 f"--output-path={RAW_REPORT_FILE}",
                 "--quiet",
                 f"--chrome-flags={chrome_flags}",
+                *([f"--chrome-path={detected_chrome}"] if detected_chrome else []),
             ],
             text=True,
             capture_output=True,
             shell=False,
-            env=env,
         )
         command_exit_code = result.returncode
         stdout = result.stdout
@@ -255,7 +252,7 @@ report = {
     "audit": AUDIT,
     "metadata": {
         "generated": TIMESTAMP,
-        "project": PROJECT,
+        **report_metadata(TARGET, ARGS.run_id),
         "tool": TOOL,
         "command": COMMAND,
         "exit_code": command_exit_code,

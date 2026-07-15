@@ -1,6 +1,9 @@
 from datetime import datetime
 from pathlib import Path
 import json
+from qa_common import target_arguments
+
+ARGS, TARGET = target_arguments("Summarize the current static website QA run")
 
 REPORT_DIR = Path("reports")
 SUMMARY_FILE = REPORT_DIR / "summary.txt"
@@ -71,7 +74,12 @@ def main():
 
     for path in REPORT_FILES:
         if path.exists():
-            reports.append(load_report(path))
+            report = load_report(path)
+            metadata = report.get("metadata", {})
+            if metadata.get("run_id") == ARGS.run_id and metadata.get("target") == str(TARGET):
+                reports.append(report)
+            else:
+                missing.append(path)
         else:
             missing.append(path)
 
@@ -80,6 +88,9 @@ def main():
         f.write("QA AUDIT SUMMARY\n")
         f.write("=====================================\n\n")
         f.write(f"Generated : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        f.write(f"Site      : {TARGET.name}\n")
+        f.write(f"Target    : {TARGET}\n")
+        f.write(f"Run ID    : {ARGS.run_id}\n")
         f.write(f"Source    : JSON reports in {REPORT_DIR}\n")
         f.write("\n=====================================\n\n")
 

@@ -3,17 +3,21 @@ from pathlib import Path
 import json
 import subprocess
 import time
+from qa_common import discover, report_metadata, target_arguments
 
 SCHEMA_VERSION = "1.0"
 TOOL = "js_audit.py"
-COMMAND = "npx eslint ."
 AUDIT = {
     "id": "javascript-lint",
     "name": "JavaScript Lint",
     "category": "javascript",
 }
 
-PROJECT = Path.cwd().name
+ARGS, TARGET = target_arguments("Lint JavaScript files in a static website")
+JS_FILES = discover(TARGET, "*.js")
+COMMAND_ARGS = ["npx", "--no-install", "eslint", *[str(path) for path in JS_FILES]]
+COMMAND = " ".join(COMMAND_ARGS)
+PROJECT = TARGET.name
 TIMESTAMP = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 REPORT_DIR = Path("reports")
@@ -24,12 +28,15 @@ JSON_REPORT_FILE = REPORT_DIR / "eslint.json"
 
 start_time = time.perf_counter()
 
-result = subprocess.run(
-    ["npx", "eslint", "."],
-    text=True,
-    capture_output=True,
-    shell=False,
-)
+if JS_FILES:
+    result = subprocess.run(
+        COMMAND_ARGS,
+        text=True,
+        capture_output=True,
+        shell=False,
+    )
+else:
+    result = subprocess.CompletedProcess(COMMAND_ARGS, 0, "", "")
 
 exit_code = result.returncode
 duration_ms = round((time.perf_counter() - start_time) * 1000)
@@ -59,7 +66,7 @@ report = {
     "audit": AUDIT,
     "metadata": {
         "generated": TIMESTAMP,
-        "project": PROJECT,
+        **report_metadata(TARGET, ARGS.run_id),
         "tool": TOOL,
         "command": COMMAND,
         "exit_code": exit_code,

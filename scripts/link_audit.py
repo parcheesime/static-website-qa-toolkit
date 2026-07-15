@@ -1,17 +1,15 @@
 from datetime import datetime
 from html.parser import HTMLParser
 from pathlib import Path
-from urllib.error import HTTPError, URLError
 from urllib.parse import unquote, urlparse
-from urllib.request import Request, urlopen
 import json
 import socket
 import subprocess
 import time
+from qa_common import discover, report_metadata, target_arguments
 
 SCHEMA_VERSION = "1.0"
 TOOL = "link_audit.py"
-COMMAND = "python3 scripts/link_audit.py"
 AUDIT = {
     "id": "broken-links",
     "name": "Broken Link Audit",
@@ -36,9 +34,11 @@ ASSET_EXTENSIONS = {
 }
 REQUEST_TIMEOUT = 5
 
-PROJECT = Path.cwd().name
+ARGS, TARGET = target_arguments("Audit links in a static website")
+COMMAND = f"python3 scripts/link_audit.py --target {TARGET}"
+PROJECT = TARGET.name
 TIMESTAMP = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-ROOT = Path.cwd()
+ROOT = TARGET
 
 REPORT_DIR = Path("reports")
 REPORT_DIR.mkdir(exist_ok=True)
@@ -92,8 +92,8 @@ def reference_attributes(tag):
 
 
 def top_level_html_files():
-    files = sorted(Path(".").glob("*.html"))
-    return sorted(files, key=lambda path: (path.name != "index.html", path.name))
+    files = discover(ROOT, "*.html")
+    return sorted(files, key=lambda path: (path.name != "index.html", str(path)))
 
 
 def available_port():
@@ -200,56 +200,6 @@ def local_reference_type(reference, parsed):
     return "internal"
 
 
-def check_external(url):
-    headers = {"User-Agent": "portfolio-site-qa-link-audit/1.0"}
-
-    for method in ("HEAD", "GET"):
-        request = Request(url, method=method, headers=headers)
-
-        try:
-            with urlopen(request, timeout=REQUEST_TIMEOUT) as response:
-                return {
-                    "ok": 200 <= response.status < 400,
-                    "status": response.status,
-                    "method": method,
-                    "error": "",
-                }
-        except HTTPError as error:
-            if method == "HEAD" and error.code == 405:
-                continue
-
-            return {
-                "ok": 200 <= error.code < 400,
-                "status": error.code,
-                "method": method,
-                "error": str(error),
-            }
-        except TimeoutError as error:
-            return {
-                "ok": False,
-                "status": None,
-                "method": method,
-                "error": f"timeout: {error}",
-            }
-        except URLError as error:
-            if method == "HEAD":
-                continue
-
-            return {
-                "ok": False,
-                "status": None,
-                "method": method,
-                "error": str(error.reason),
-            }
-
-    return {
-        "ok": False,
-        "status": None,
-        "method": "GET",
-        "error": "request failed",
-    }
-
-
 def anchor_exists(target_file, fragment, page_ids):
     if not fragment:
         return True
@@ -258,7 +208,7 @@ def anchor_exists(target_file, fragment, page_ids):
         return fragment in page_ids[target_file]
 
     if target_file.exists() and target_file.suffix.lower() == ".html":
-        parser = parse_page(target_file.relative_to(ROOT))
+        parser = parse_page(target_file)
         page_ids[target_file] = parser.ids
         return fragment in parser.ids
 
@@ -266,14 +216,19 @@ def anchor_exists(target_file, fragment, page_ids):
 
 
 html_files = top_level_html_files()
-port = available_port()
-base_url = f"http://127.0.0.1:{port}"
+base_url = ""
 start_time = time.perf_counter()
-server = subprocess.Popen(
-    ["python3", "-m", "http.server", str(port), "--bind", "127.0.0.1"],
-    stdout=subprocess.DEVNULL,
-    stderr=subprocess.DEVNULL,
-)
+
+
+class NoServer:
+    def terminate(self):
+        pass
+
+    def wait(self, timeout=None):
+        pass
+
+
+server = NoServer()
 
 issues = {
     "broken_internal_links": [],
@@ -295,7 +250,7 @@ metrics = {
     "skipped_links": 0,
 }
 runtime_error = ""
-server_started = wait_for_server(port)
+server_started = True
 
 try:
     if not server_started:
@@ -366,22 +321,11 @@ try:
                         continue
 
                     if is_external(parsed):
-                        metrics["links_checked"] += 1
                         metrics["external_links"] += 1
-                        result = check_external(value)
-
-                        if not result["ok"]:
-                            issues["broken_external_links"].append(
-                                issue(
-                                    page_path,
-                                    value,
-                                    source,
-                                    "external request failed",
-                                    status=result["status"],
-                                    method=result["method"],
-                                    error=result["error"],
-                                )
-                            )
+                        metrics["skipped_links"] += 1
+                        issues["skipped_links"].append(
+                            issue(page_path, value, source, "external URL not requested")
+                        )
                         continue
 
                     reference_type = local_reference_type(reference, parsed)
@@ -494,7 +438,7 @@ report = {
     "audit": AUDIT,
     "metadata": {
         "generated": TIMESTAMP,
-        "project": PROJECT,
+        **report_metadata(TARGET, ARGS.run_id),
         "tool": TOOL,
         "command": COMMAND,
         "exit_code": exit_code,

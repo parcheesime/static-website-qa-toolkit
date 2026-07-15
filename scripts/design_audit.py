@@ -6,19 +6,21 @@ from urllib.parse import unquote, urlparse
 import json
 import re
 import time
+from qa_common import discover, report_metadata, target_arguments
 
 SCHEMA_VERSION = "1.0"
 TOOL = "design_audit.py"
-COMMAND = "python3 scripts/design_audit.py"
 AUDIT = {
     "id": "design-consistency",
     "name": "Design Consistency",
     "category": "design",
 }
 
-PROJECT = Path.cwd().name
+ARGS, TARGET = target_arguments("Audit static website design consistency")
+COMMAND = f"python3 scripts/design_audit.py --target {TARGET}"
+PROJECT = TARGET.name
 TIMESTAMP = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-ROOT = Path.cwd()
+ROOT = TARGET
 
 REPORT_DIR = Path("reports")
 REPORT_DIR.mkdir(exist_ok=True)
@@ -81,8 +83,8 @@ class PageParser(HTMLParser):
 
 
 def top_level_html_files():
-    files = sorted(Path(".").glob("*.html"))
-    return sorted(files, key=lambda path: (path.name != "index.html", path.name))
+    files = discover(ROOT, "*.html")
+    return sorted(files, key=lambda path: (path.name != "index.html", str(path)))
 
 
 def local_path_from_href(href):
@@ -97,8 +99,7 @@ def local_path_from_href(href):
 def css_files_used_by_site(html_pages):
     css_files = []
 
-    if Path("style.css").exists():
-        css_files.append(Path("style.css"))
+    css_files.extend(discover(ROOT, "*.css"))
 
     for page in html_pages:
         parser = parse_html(page)
@@ -106,8 +107,11 @@ def css_files_used_by_site(html_pages):
         for href in parser.stylesheets:
             path = local_path_from_href(href)
 
-            if path and path.suffix.lower() == ".css" and path.exists():
-                css_files.append(path)
+            if path and path.suffix.lower() == ".css":
+                candidate = (ROOT / str(path).lstrip("/")) if str(path).startswith("/") else (page.parent / path)
+                candidate = candidate.resolve()
+                if candidate.is_relative_to(ROOT) and candidate.exists():
+                    css_files.append(candidate)
 
     unique = []
     seen = set()
@@ -588,7 +592,7 @@ report = {
     "audit": AUDIT,
     "metadata": {
         "generated": TIMESTAMP,
-        "project": PROJECT,
+        **report_metadata(TARGET, ARGS.run_id),
         "tool": TOOL,
         "command": COMMAND,
         "exit_code": 0,

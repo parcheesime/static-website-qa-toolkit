@@ -4,21 +4,23 @@ from pathlib import Path
 import json
 import re
 import time
+from qa_common import discover, report_metadata, target_arguments
 
 SCHEMA_VERSION = "1.0"
 TOOL = "css_health.py"
-COMMAND = "python3 scripts/css_health.py"
 AUDIT = {
     "id": "css-health",
     "name": "CSS Health",
     "category": "css",
 }
-CSS_FILE = Path("style.css")
+ARGS, TARGET = target_arguments("Audit CSS health in a static website")
+CSS_FILES = discover(TARGET, "*.css")
+COMMAND = f"python3 scripts/css_health.py --target {TARGET}"
 REPORT_DIR = Path("reports")
 REPORT_FILE = REPORT_DIR / "css_health.txt"
 JSON_REPORT_FILE = REPORT_DIR / "css_health.json"
 
-PROJECT = Path.cwd().name
+PROJECT = TARGET.name
 TIMESTAMP = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 EXIT_CODE = 0
 
@@ -26,7 +28,7 @@ REPORT_DIR.mkdir(exist_ok=True)
 
 start_time = time.perf_counter()
 
-css = CSS_FILE.read_text(encoding="utf-8")
+css = "\n".join(path.read_text(encoding="utf-8") for path in CSS_FILES)
 css_no_comments = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
 
 blocks = re.findall(r"([^{}]+)\{([^{}]+)\}", css_no_comments)
@@ -101,7 +103,7 @@ repeated_colors = [
 ]
 
 metrics = {
-    "css_file": str(CSS_FILE),
+    "css_files": [str(path.relative_to(TARGET)) for path in CSS_FILES],
     "rule_blocks": len(blocks),
     "unique_selectors": len(selector_counts),
     "duplicate_selectors": len(duplicate_selectors),
@@ -142,7 +144,7 @@ report = {
     "audit": AUDIT,
     "metadata": {
         "generated": TIMESTAMP,
-        "project": PROJECT,
+        **report_metadata(TARGET, ARGS.run_id),
         "tool": TOOL,
         "command": COMMAND,
         "exit_code": EXIT_CODE,
@@ -177,7 +179,7 @@ with REPORT_FILE.open("w", encoding="utf-8") as f:
     f.write(f"Result    : {report['result']['severity'].upper()}\n")
     f.write("\n=====================================\n\n")
 
-    f.write(f"CSS File: {report['metrics']['css_file']}\n")
+    f.write(f"CSS Files: {', '.join(report['metrics']['css_files']) or '(none)'}\n")
     f.write(f"Rule Blocks: {report['metrics']['rule_blocks']}\n")
     f.write(f"Unique Selectors: {report['metrics']['unique_selectors']}\n")
     f.write(f"Duplicate Selectors: {report['metrics']['duplicate_selectors']}\n")

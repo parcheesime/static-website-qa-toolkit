@@ -4,6 +4,7 @@ import json
 import socket
 import subprocess
 import time
+from qa_common import discover, report_metadata, target_arguments
 
 SCHEMA_VERSION = "1.0"
 TOOL = "accessibility_audit.py"
@@ -13,7 +14,8 @@ AUDIT = {
     "category": "accessibility",
 }
 
-PROJECT = Path.cwd().name
+ARGS, TARGET = target_arguments("Audit static website accessibility")
+PROJECT = TARGET.name
 TIMESTAMP = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 REPORT_DIR = Path("reports")
@@ -24,8 +26,8 @@ JSON_REPORT_FILE = REPORT_DIR / "accessibility.json"
 
 
 def top_level_html_files():
-    files = sorted(Path(".").glob("*.html"))
-    return sorted(files, key=lambda path: (path.name != "index.html", path.name))
+    files = discover(TARGET, "*.html")
+    return sorted(files, key=lambda path: (path.name != "index.html", str(path)))
 
 
 def available_port():
@@ -51,7 +53,7 @@ def wait_for_server(port, timeout=5):
 
 def run_pa11y(url):
     return subprocess.run(
-        ["npx", "--yes", "pa11y", "--reporter", "json", url],
+        ["npx", "--no-install", "pa11y", "--reporter", "json", url],
         text=True,
         capture_output=True,
         shell=False,
@@ -75,16 +77,16 @@ port = available_port()
 base_url = f"http://127.0.0.1:{port}"
 pages = [
     {
-        "path": str(path),
-        "url": f"{base_url}/{path.name}",
+        "path": str(path.relative_to(TARGET)),
+        "url": f"{base_url}/{path.relative_to(TARGET).as_posix()}",
     }
     for path in html_files
 ]
-COMMAND = "npx --yes pa11y --reporter json " + " ".join(page["url"] for page in pages)
+COMMAND = "npx --no-install pa11y --reporter json " + " ".join(page["url"] for page in pages)
 
 start_time = time.perf_counter()
 server = subprocess.Popen(
-    ["python3", "-m", "http.server", str(port), "--bind", "127.0.0.1"],
+    ["python3", "-m", "http.server", str(port), "--bind", "127.0.0.1", "--directory", str(TARGET)],
     stdout=subprocess.DEVNULL,
     stderr=subprocess.DEVNULL,
 )
@@ -176,7 +178,7 @@ report = {
     "audit": AUDIT,
     "metadata": {
         "generated": TIMESTAMP,
-        "project": PROJECT,
+        **report_metadata(TARGET, ARGS.run_id),
         "tool": TOOL,
         "command": COMMAND,
         "exit_code": command_exit_code,
