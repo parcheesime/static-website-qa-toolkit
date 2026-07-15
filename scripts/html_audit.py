@@ -3,7 +3,7 @@ from pathlib import Path
 import json
 import subprocess
 import time
-from qa_common import discover, report_metadata, target_arguments
+from qa_common import discover, local_tool, report_metadata, target_arguments
 
 SCHEMA_VERSION = "1.0"
 TOOL = "html_audit.py"
@@ -13,14 +13,13 @@ AUDIT = {
     "category": "html",
 }
 
-ARGS, TARGET = target_arguments("Validate HTML files in a static website")
+ARGS, TARGET, REPORT_DIR = target_arguments("Validate HTML files in a static website")
 HTML_FILES = discover(TARGET, "*.html")
-COMMAND_ARGS = ["npx", "--no-install", "html-validate", *[str(path) for path in HTML_FILES]]
+COMMAND_ARGS = [str(local_tool("html-validate")), *[str(path) for path in HTML_FILES]]
 COMMAND = " ".join(COMMAND_ARGS)
-PROJECT = TARGET.name
+PROJECT = ARGS.project
 TIMESTAMP = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-REPORT_DIR = Path("reports")
 REPORT_DIR.mkdir(exist_ok=True)
 
 REPORT_FILE = REPORT_DIR / "html_validate.txt"
@@ -42,19 +41,28 @@ exit_code = result.returncode
 duration_ms = round((time.perf_counter() - start_time) * 1000)
 has_output = bool(result.stdout or result.stderr)
 
-if exit_code != 0:
+if not HTML_FILES:
+    status = "NOT_APPLICABLE"
+    passed = True
+    severity = "not_applicable"
+    score = None
+    errors = warnings = 0
+elif exit_code != 0:
+    status = "ERROR"
     passed = False
     severity = "error"
     score = 0
     errors = 1
     warnings = 0
 elif has_output:
+    status = "WARNING"
     passed = True
     severity = "warning"
     score = 90
     errors = 0
     warnings = 1
 else:
+    status = "PASS"
     passed = True
     severity = "pass"
     score = 100
@@ -66,7 +74,7 @@ report = {
     "audit": AUDIT,
     "metadata": {
         "generated": TIMESTAMP,
-        **report_metadata(TARGET, ARGS.run_id),
+        **report_metadata(TARGET, ARGS, AUDIT["name"], COMMAND, "AVAILABLE", duration_ms, JSON_REPORT_FILE),
         "tool": TOOL,
         "command": COMMAND,
         "exit_code": exit_code,
@@ -74,6 +82,7 @@ report = {
     },
     "result": {
         "passed": passed,
+        "status": status,
         "severity": severity,
         "score": score,
         "confidence": "high",
@@ -102,6 +111,7 @@ with REPORT_FILE.open("w", encoding="utf-8") as f:
 
     f.write(f"Generated : {report['metadata']['generated']}\n")
     f.write(f"Project   : {report['metadata']['project']}\n")
+    f.write(f"Schema    : {report['schema_version']}\nTarget    : {TARGET}\nRun ID    : {ARGS.run_id}\nTool Status: AVAILABLE\nConfidence: {report['result']['confidence']}\nDuration Ms: {duration_ms}\nReport    : {REPORT_FILE.resolve()}\n")
     f.write(f"Tool      : {report['metadata']['tool']}\n")
     f.write(f"Command   : {report['metadata']['command']}\n")
     f.write(f"Exit Code : {report['metadata']['exit_code']}\n")

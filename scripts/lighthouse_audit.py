@@ -6,11 +6,11 @@ import socket
 import subprocess
 import tempfile
 import time
-from qa_common import report_metadata, target_arguments
+from qa_common import local_tool, report_metadata, target_arguments
 
 SCHEMA_VERSION = "1.0"
 TOOL = "lighthouse_audit.py"
-LIGHTHOUSE_PACKAGE = "lighthouse@12"
+LIGHTHOUSE_PACKAGE = "lighthouse"
 AUDIT = {
     "id": "lighthouse",
     "name": "Lighthouse",
@@ -19,11 +19,10 @@ AUDIT = {
 CATEGORY_TARGET = 90
 ERROR_THRESHOLD = 70
 
-ARGS, TARGET = target_arguments("Run Lighthouse against a static website")
-PROJECT = TARGET.name
+ARGS, TARGET, REPORT_DIR = target_arguments("Run Lighthouse against a static website")
+PROJECT = ARGS.project
 TIMESTAMP = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-REPORT_DIR = Path("reports")
 REPORT_DIR.mkdir(exist_ok=True)
 
 REPORT_FILE = REPORT_DIR / "lighthouse.txt"
@@ -137,11 +136,11 @@ port = available_port()
 url = f"http://127.0.0.1:{port}/index.html"
 chrome_profile = tempfile.TemporaryDirectory(prefix="lighthouse-profile-")
 chrome_flags = (
-    "--headless --no-sandbox --disable-gpu "
+    "--headless --no-sandbox --disable-gpu --host-resolver-rules='MAP * 0.0.0.0, EXCLUDE localhost, EXCLUDE 127.0.0.1' "
     f"--user-data-dir={chrome_profile.name}"
 )
 COMMAND = (
-    f"npx --no-install {LIGHTHOUSE_PACKAGE} "
+    f"node_modules/.bin/{LIGHTHOUSE_PACKAGE} "
     f"{url} --output=json --output-path={RAW_REPORT_FILE} --quiet "
     f"--chrome-flags=\"{chrome_flags}\""
 )
@@ -173,9 +172,7 @@ try:
 
         result = subprocess.run(
             [
-                "npx",
-                "--no-install",
-                LIGHTHOUSE_PACKAGE,
+                str(local_tool(LIGHTHOUSE_PACKAGE)),
                 url,
                 "--output=json",
                 f"--output-path={RAW_REPORT_FILE}",
@@ -252,7 +249,7 @@ report = {
     "audit": AUDIT,
     "metadata": {
         "generated": TIMESTAMP,
-        **report_metadata(TARGET, ARGS.run_id),
+        **report_metadata(TARGET, ARGS, AUDIT["name"], COMMAND, "AVAILABLE", duration_ms, JSON_REPORT_FILE),
         "tool": TOOL,
         "command": COMMAND,
         "exit_code": command_exit_code,
@@ -260,6 +257,7 @@ report = {
     },
     "result": {
         "passed": passed,
+        "status": severity.upper(),
         "severity": severity,
         "score": score,
         "confidence": "high",
@@ -281,6 +279,7 @@ with REPORT_FILE.open("w", encoding="utf-8") as f:
 
     f.write(f"Generated : {report['metadata']['generated']}\n")
     f.write(f"Project   : {report['metadata']['project']}\n")
+    f.write(f"Schema    : {report['schema_version']}\nTarget    : {TARGET}\nRun ID    : {ARGS.run_id}\nTool Status: AVAILABLE\nConfidence: {report['result']['confidence']}\nDuration Ms: {duration_ms}\nReport    : {REPORT_FILE.resolve()}\n")
     f.write(f"Tool      : {report['metadata']['tool']}\n")
     f.write(f"Command   : {report['metadata']['command']}\n")
     f.write(f"Exit Code : {report['metadata']['exit_code']}\n")

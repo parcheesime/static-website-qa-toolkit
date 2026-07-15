@@ -1,0 +1,10 @@
+{
+  "chromeLaunchConfig": {
+    "args": [
+      "--no-sandbox",
+      "--disable-gpu",
+      "--host-resolver-rules=MAP * 0.0.0.0, EXCLUDE localhost, EXCLUDE 127.0.0.1"
+    ]
+  },
+  "timeout": 30000
+}

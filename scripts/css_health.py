@@ -13,14 +13,13 @@ AUDIT = {
     "name": "CSS Health",
     "category": "css",
 }
-ARGS, TARGET = target_arguments("Audit CSS health in a static website")
+ARGS, TARGET, REPORT_DIR = target_arguments("Audit CSS health in a static website")
 CSS_FILES = discover(TARGET, "*.css")
 COMMAND = f"python3 scripts/css_health.py --target {TARGET}"
-REPORT_DIR = Path("reports")
 REPORT_FILE = REPORT_DIR / "css_health.txt"
 JSON_REPORT_FILE = REPORT_DIR / "css_health.json"
 
-PROJECT = TARGET.name
+PROJECT = ARGS.project
 TIMESTAMP = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 EXIT_CODE = 0
 
@@ -135,8 +134,9 @@ issues = {
 }
 
 issue_count = sum(len(items) for items in issues.values())
-severity = "warning" if issue_count else "pass"
-score = 85 if issue_count else 100
+status = "NOT_APPLICABLE" if not CSS_FILES else ("WARNING" if issue_count else "PASS")
+severity = status.lower()
+score = None if not CSS_FILES else (85 if issue_count else 100)
 duration_ms = round((time.perf_counter() - start_time) * 1000)
 
 report = {
@@ -144,7 +144,7 @@ report = {
     "audit": AUDIT,
     "metadata": {
         "generated": TIMESTAMP,
-        **report_metadata(TARGET, ARGS.run_id),
+        **report_metadata(TARGET, ARGS, AUDIT["name"], COMMAND, "AVAILABLE", duration_ms, JSON_REPORT_FILE),
         "tool": TOOL,
         "command": COMMAND,
         "exit_code": EXIT_CODE,
@@ -152,6 +152,7 @@ report = {
     },
     "result": {
         "passed": True,
+        "status": status,
         "severity": severity,
         "score": score,
         "confidence": "medium",
@@ -173,6 +174,7 @@ with REPORT_FILE.open("w", encoding="utf-8") as f:
 
     f.write(f"Generated : {report['metadata']['generated']}\n")
     f.write(f"Project   : {report['metadata']['project']}\n")
+    f.write(f"Schema    : {report['schema_version']}\nTarget    : {TARGET}\nRun ID    : {ARGS.run_id}\nTool Status: AVAILABLE\nConfidence: {report['result']['confidence']}\nDuration Ms: {duration_ms}\nReport    : {REPORT_FILE.resolve()}\n")
     f.write(f"Tool      : {report['metadata']['tool']}\n")
     f.write(f"Command   : {report['metadata']['command']}\n")
     f.write(f"Exit Code : {report['metadata']['exit_code']}\n")

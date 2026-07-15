@@ -16,13 +16,12 @@ AUDIT = {
     "category": "design",
 }
 
-ARGS, TARGET = target_arguments("Audit static website design consistency")
+ARGS, TARGET, REPORT_DIR = target_arguments("Audit static website design consistency")
 COMMAND = f"python3 scripts/design_audit.py --target {TARGET}"
-PROJECT = TARGET.name
+PROJECT = ARGS.project
 TIMESTAMP = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 ROOT = TARGET
 
-REPORT_DIR = Path("reports")
 REPORT_DIR.mkdir(exist_ok=True)
 
 REPORT_FILE = REPORT_DIR / "design_audit.txt"
@@ -592,7 +591,7 @@ report = {
     "audit": AUDIT,
     "metadata": {
         "generated": TIMESTAMP,
-        **report_metadata(TARGET, ARGS.run_id),
+        **report_metadata(TARGET, ARGS, AUDIT["name"], COMMAND, "AVAILABLE", duration_ms, JSON_REPORT_FILE),
         "tool": TOOL,
         "command": COMMAND,
         "exit_code": 0,
@@ -600,6 +599,7 @@ report = {
     },
     "result": {
         "passed": True,
+        "status": "NOT_APPLICABLE" if not html_pages and not css_files else severity.upper(),
         "severity": severity,
         "score": score,
         "confidence": "low",
@@ -621,6 +621,7 @@ with REPORT_FILE.open("w", encoding="utf-8") as f:
 
     f.write(f"Generated : {report['metadata']['generated']}\n")
     f.write(f"Project   : {report['metadata']['project']}\n")
+    f.write(f"Schema    : {report['schema_version']}\nTarget    : {TARGET}\nRun ID    : {ARGS.run_id}\nTool Status: AVAILABLE\nConfidence: {report['result']['confidence']}\nDuration Ms: {duration_ms}\nReport    : {REPORT_FILE.resolve()}\n")
     f.write(f"Tool      : {report['metadata']['tool']}\n")
     f.write(f"Command   : {report['metadata']['command']}\n")
     f.write(f"Exit Code : {report['metadata']['exit_code']}\n")

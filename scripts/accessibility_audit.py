@@ -4,7 +4,7 @@ import json
 import socket
 import subprocess
 import time
-from qa_common import discover, report_metadata, target_arguments
+from qa_common import discover, local_tool, report_metadata, target_arguments
 
 SCHEMA_VERSION = "1.0"
 TOOL = "accessibility_audit.py"
@@ -14,11 +14,10 @@ AUDIT = {
     "category": "accessibility",
 }
 
-ARGS, TARGET = target_arguments("Audit static website accessibility")
-PROJECT = TARGET.name
+ARGS, TARGET, REPORT_DIR = target_arguments("Audit static website accessibility")
+PROJECT = ARGS.project
 TIMESTAMP = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-REPORT_DIR = Path("reports")
 REPORT_DIR.mkdir(exist_ok=True)
 
 REPORT_FILE = REPORT_DIR / "accessibility.txt"
@@ -52,8 +51,9 @@ def wait_for_server(port, timeout=5):
 
 
 def run_pa11y(url):
+    config = Path(__file__).resolve().parent.parent / "pa11y.config.json"
     return subprocess.run(
-        ["npx", "--no-install", "pa11y", "--reporter", "json", url],
+        [str(local_tool("pa11y")), "--config", str(config), "--reporter", "json", url],
         text=True,
         capture_output=True,
         shell=False,
@@ -82,7 +82,7 @@ pages = [
     }
     for path in html_files
 ]
-COMMAND = "npx --no-install pa11y --reporter json " + " ".join(page["url"] for page in pages)
+COMMAND = "node_modules/.bin/pa11y --config pa11y.config.json --reporter json " + " ".join(page["url"] for page in pages)
 
 start_time = time.perf_counter()
 server = subprocess.Popen(
@@ -178,7 +178,7 @@ report = {
     "audit": AUDIT,
     "metadata": {
         "generated": TIMESTAMP,
-        **report_metadata(TARGET, ARGS.run_id),
+        **report_metadata(TARGET, ARGS, AUDIT["name"], COMMAND, "AVAILABLE", duration_ms, JSON_REPORT_FILE),
         "tool": TOOL,
         "command": COMMAND,
         "exit_code": command_exit_code,
@@ -186,6 +186,7 @@ report = {
     },
     "result": {
         "passed": passed,
+        "status": severity.upper(),
         "severity": severity,
         "score": score,
         "confidence": "high",
@@ -221,6 +222,7 @@ with REPORT_FILE.open("w", encoding="utf-8") as f:
 
     f.write(f"Generated : {report['metadata']['generated']}\n")
     f.write(f"Project   : {report['metadata']['project']}\n")
+    f.write(f"Schema    : {report['schema_version']}\nTarget    : {TARGET}\nRun ID    : {ARGS.run_id}\nTool Status: AVAILABLE\nConfidence: {report['result']['confidence']}\nDuration Ms: {duration_ms}\nReport    : {REPORT_FILE.resolve()}\n")
     f.write(f"Tool      : {report['metadata']['tool']}\n")
     f.write(f"Command   : {report['metadata']['command']}\n")
     f.write(f"Exit Code : {report['metadata']['exit_code']}\n")

@@ -79,6 +79,13 @@ pip install -r requirements.txt
 npm install
 ```
 
+The QA run performs a local dependency preflight for ESLint, Stylelint,
+html-validate, Pa11y, and Lighthouse. It never downloads tools automatically.
+If a required executable is missing, that audit is recorded as `NOT_RUN` with
+`npm install` as the setup command, while independent audits continue.
+ESLint and Stylelint use the toolkit-owned `eslint.config.js` and
+`stylelint.config.cjs`; target repositories do not need lint configuration.
+
 ---
 
 ### Auditing the Current Repository
@@ -113,6 +120,20 @@ From the toolkit directory:
 make qa TARGET=../barkey-pet-sitting
 ```
 
+This secure default records Pa11y and Lighthouse as `NOT_RUN`, because rendering
+an untrusted target can execute its JavaScript. To explicitly allow local browser
+execution, use:
+
+```bash
+make qa TARGET=../barkey-pet-sitting BROWSER_AUDITS=1
+```
+
+The opt-in serves `TARGET` on localhost, blocks non-local hostname resolution in
+the browser configuration, and stops each local server after its audit. It still
+allows the target's JavaScript to execute locally. If sockets or browser startup
+are unavailable, the browser audit remains incomplete and must not leave a server
+running.
+
 or
 
 ```bash
@@ -125,22 +146,56 @@ The target repository is audited in place and is never modified by the toolkit.
 
 ### Reports
 
-Audit reports are generated in the toolkit's `reports/` directory.
+Each QA invocation writes to a unique run directory in the toolkit:
 
 Example:
 
 ```text
 reports/
-├── summary.txt
-├── summary.json
-├── html_validation.txt
-├── html_validation.json
-├── css_health.txt
-├── css_health.json
-└── ...
+└── runs/
+    └── <run-id>/
+        ├── preflight.json
+        ├── summary.txt
+        ├── summary.json
+        ├── html_validate.json
+        ├── css_health.json
+        └── ...
 ```
 
-Each report includes metadata identifying the audited target repository.
+The startup output prints the run ID and exact report directory; use that
+directory to identify the latest report. A `reports/latest/` alias is not
+currently created. Every report identifies the target, project, and run ID.
+
+Statuses have these meanings:
+
+- `PASS`: the audit ran without configured failures.
+- `WARNING`: the audit ran and found reviewable issues.
+- `ERROR`: the audit failed or found configured hard failures.
+- `NOT_RUN`: the audit could not run, usually because a tool is missing.
+- `NOT_APPLICABLE`: the target has no relevant files for that audit.
+
+The summary separates `Site Result` from `Run Completeness`. Disabled or missing
+audits make completeness `INCOMPLETE` without making the website fail. Findings
+from completed site audits determine the site result.
+
+The project-quality audit reports likely unused assets, unused CSS selectors,
+and unreferenced JavaScript functions. Findings are grouped by confidence and
+remain heuristics requiring manual review. The toolkit never deletes reported
+files or code.
+
+Preview removal of known legacy flat reports with:
+
+```bash
+make clean-legacy-reports-dry-run
+```
+
+After reviewing the list, remove only those known generated files with:
+
+```bash
+make clean-legacy-reports
+```
+
+Cleanup never traverses or removes `reports/runs/`, and unknown files are kept.
 
 The audited website itself is not modified and no report files are written into the target project.
 
@@ -160,7 +215,7 @@ make qa TARGET=../barkey-pet-sitting
 5. Review the reports in:
 
 ```text
-reports/
+reports/runs/<run-id>/
 ```
 
 6. Return to the website project and fix any issues.
@@ -172,5 +227,5 @@ reports/
 
 - The toolkit never modifies the audited website.
 - Reports are written only to the toolkit repository.
-- External websites and third-party services are not contacted unless explicitly required by an audit.
+- External websites and third-party services are not contacted automatically.
 - Some audits (such as Lighthouse or Pa11y) require a locally running web server.

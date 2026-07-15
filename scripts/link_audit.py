@@ -34,13 +34,12 @@ ASSET_EXTENSIONS = {
 }
 REQUEST_TIMEOUT = 5
 
-ARGS, TARGET = target_arguments("Audit links in a static website")
+ARGS, TARGET, REPORT_DIR = target_arguments("Audit links in a static website")
 COMMAND = f"python3 scripts/link_audit.py --target {TARGET}"
-PROJECT = TARGET.name
+PROJECT = ARGS.project
 TIMESTAMP = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 ROOT = TARGET
 
-REPORT_DIR = Path("reports")
 REPORT_DIR.mkdir(exist_ok=True)
 
 REPORT_FILE = REPORT_DIR / "link_audit.txt"
@@ -398,10 +397,18 @@ hard_failures = metrics["broken_internal_links"] + metrics["broken_asset_referen
 soft_issues = (
     metrics["broken_external_links"]
     + len(issues["malformed_links"])
-    + metrics["skipped_links"]
 )
 
-if runtime_error:
+if not html_files:
+    status = "NOT_APPLICABLE"
+    passed = True
+    severity = "not_applicable"
+    score = None
+    exit_code = 0
+    result_errors = 0
+    result_warnings = 0
+elif runtime_error:
+    status = "ERROR"
     passed = False
     severity = "error"
     score = 0
@@ -412,6 +419,7 @@ if runtime_error:
         issue("runtime", base_url, "server", runtime_error)
     )
 elif hard_failures:
+    status = "ERROR"
     passed = False
     severity = "error"
     score = 60
@@ -419,6 +427,7 @@ elif hard_failures:
     result_errors = hard_failures
     result_warnings = soft_issues
 elif soft_issues:
+    status = "WARNING"
     passed = True
     severity = "warning"
     score = 85
@@ -426,6 +435,7 @@ elif soft_issues:
     result_errors = 0
     result_warnings = soft_issues
 else:
+    status = "PASS"
     passed = True
     severity = "pass"
     score = 100
@@ -438,7 +448,7 @@ report = {
     "audit": AUDIT,
     "metadata": {
         "generated": TIMESTAMP,
-        **report_metadata(TARGET, ARGS.run_id),
+        **report_metadata(TARGET, ARGS, AUDIT["name"], COMMAND, "AVAILABLE", duration_ms, JSON_REPORT_FILE),
         "tool": TOOL,
         "command": COMMAND,
         "exit_code": exit_code,
@@ -446,6 +456,7 @@ report = {
     },
     "result": {
         "passed": passed,
+        "status": status,
         "severity": severity,
         "score": score,
         "confidence": "medium",
@@ -467,6 +478,7 @@ with REPORT_FILE.open("w", encoding="utf-8") as f:
 
     f.write(f"Generated : {report['metadata']['generated']}\n")
     f.write(f"Project   : {report['metadata']['project']}\n")
+    f.write(f"Schema    : {report['schema_version']}\nTarget    : {TARGET}\nRun ID    : {ARGS.run_id}\nTool Status: AVAILABLE\nConfidence: {report['result']['confidence']}\nDuration Ms: {duration_ms}\nReport    : {REPORT_FILE.resolve()}\n")
     f.write(f"Tool      : {report['metadata']['tool']}\n")
     f.write(f"Command   : {report['metadata']['command']}\n")
     f.write(f"Exit Code : {report['metadata']['exit_code']}\n")
